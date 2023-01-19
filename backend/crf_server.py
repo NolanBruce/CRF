@@ -1,0 +1,141 @@
+# Import flask and datetime module for showing date and time
+from flask import Flask, request, jsonify
+from flask_mysqldb import MySQL
+from flask_cors import CORS
+from flask_caching import Cache
+import MySQLdb.cursors
+from secrets import choice
+import string
+import os
+from queries import get_recipe_by_id_query, get_recipe_by_name_query, search_recipes_by_ingredients_query, \
+    get_ingredient_by_name_query, get_ingredient_by_id_query, search_ingredients_by_name_query, \
+    search_recipes_by_name_query
+
+
+# Create Flask app
+app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY') or \
+                 ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(36))
+# CORS
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+# SQL
+app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST') or 'localhost'
+app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER')
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD')
+app.config['MYSQL_DB'] = os.environ.get('MYSQL_DB') or 'crf'
+mysql = MySQL(app)
+
+# Cache
+app.config['CACHE_TYPE'] = "SimpleCache"
+app.config['CACHE_DEFAULT_TIMEOUT'] = 60
+cache = Cache(app)
+
+
+@app.route('/recipes', methods=['POST'])
+# @cache.cached(timeout=300, key_prefix='search_recipes')   # TODO: Update cache to handle POST request bodies
+def search_recipes():
+    data = request.json
+    if 'ingredients' in data.keys():
+        result = search_recipes_by_ingredients(data['ingredients'])
+        return jsonify(result)
+    elif 'recipe_name' in data.keys():
+        recipe_name = data['recipe_name']
+        start = data.get('start', 0)
+        limit = data.get('limit', 10)
+        result = search_recipes_by_name(recipe_name, start=start, limit=limit)
+        return jsonify(result)
+
+    return 'Invalid request. Ingredients or recipe name must be provided.', 400
+
+
+@app.route('/recipes/<int:recipe_id>/', methods=['GET'])
+@cache.cached(key_prefix='get_recipe_by_id')
+def get_recipe_by_id(recipe_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    query, parameters = get_recipe_by_id_query(recipe_id)
+    cursor.execute(query, parameters)
+    return jsonify(convert_sql_recipe_results_to_dict(cursor))
+
+
+@app.route('/recipes/<string:recipe_name>/', methods=['GET'])
+@cache.cached(key_prefix='get_recipe_by_name')
+def get_recipe_by_name(recipe_name):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    query, parameters = get_recipe_by_name_query(recipe_name)
+    cursor.execute(query, parameters)
+    return jsonify(convert_sql_recipe_results_to_dict(cursor))
+
+
+@app.route('/ingredients/', methods=['POST'])
+# @cache.cached(timeout=300, key_prefix='search_ingredients_by_name')
+def search_ingredients_by_name():
+    data = request.json
+    if 'ingredient' not in data.keys():
+        return 'Invalid request. Missing ingredient.', 400
+
+    result: list[dict] = []
+    ingredient = data['ingredient']
+    start = data.get('start', 0)
+    limit = data.get('limit', 10)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    query, parameters = search_ingredients_by_name_query(ingredient, start=start, limit=limit)
+    cursor.execute(query, parameters)
+    for row in cursor:
+        result.append(row)
+    return jsonify(result)
+
+
+@app.route('/ingredients/<int:ingredient_id>/', methods=['GET'])
+@cache.cached(key_prefix='get_ingredient_by_id')
+def get_ingredient_by_id(ingredient_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    query, parameters = get_ingredient_by_id_query(ingredient_id)
+    cursor.execute(query, parameters)
+    return jsonify(cursor.fetchone())
+
+
+@app.route('/ingredients/<string:ingredient_name>/', methods=['GET'])
+@cache.cached(key_prefix='get_ingredient_by_name')
+def get_ingredient_by_name(ingredient_name):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    query, parameters = get_ingredient_by_name_query(ingredient_name)
+    cursor.execute(query, parameters)
+    return jsonify(cursor.fetchone())
+
+
+def convert_sql_recipe_results_to_dict(cursor: MySQLdb.cursors.DictCursor) -> dict:
+    result: dict = {}
+    ingredients: list = []
+    for row in cursor:
+        if 'name' not in result:
+            result['name'] = row['name']
+        row.pop('name', None)
+        ingredients.append(row)
+    result['ingredients'] = ingredients
+    return result
+
+
+def search_recipes_by_ingredients(ingredients: list[str]) -> list[dict]:
+    result: list[dict] = []
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    query, parameters = search_recipes_by_ingredients_query(ingredients)
+    cursor.execute(query, parameters)
+    for row in cursor:
+        result.append(row)
+    return result
+
+
+def search_recipes_by_name(recipe_name: str, start: int = 0, limit: int = 0) -> list[dict]:
+    result: list[dict] = []
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    query, parameters = search_recipes_by_name_query(recipe_name, start=start, limit=limit)
+    cursor.execute(query, parameters)
+    for row in cursor:
+        result.append(row)
+    return result
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
