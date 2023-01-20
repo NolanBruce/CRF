@@ -43,8 +43,6 @@ class InputIngredient extends Component {
     if(validatedIngredientName) {
       this.props.addIngredientItem(validatedIngredientName);
       this.clearSearchTerm();
-    } else {
-      alert("Please enter a valid ingredient");
     }
   }
 
