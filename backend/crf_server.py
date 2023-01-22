@@ -6,10 +6,13 @@ from psycopg2.extras import RealDictCursor
 from secrets import choice
 import string
 import os
+from dotenv import load_dotenv
 from queries import get_recipe_by_id_query, get_recipe_by_name_query, search_recipes_by_ingredients_query, \
     get_ingredient_by_name_query, get_ingredient_by_id_query, search_ingredients_by_name_query, \
     search_recipes_by_name_query
 
+
+load_dotenv()
 
 # Create Flask app
 app = Flask(__name__)
