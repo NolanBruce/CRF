@@ -30,7 +30,7 @@ class IngredientsSearch extends React.Component {
   render() {
     return (
       <div className="ingredients-search" style={{display: this.state.display}}>
-        <button className="ingredient-search-button" type="button" onClick={() => this.props.searchRecipes(this.props.ingredients)}><span>Search for Matching Ingredients</span></button>
+        <button className="ingredient-search-button" type="button" onClick={() => this.props.searchRecipes(this.props.ingredients)}><span>Search for Matching Recipes</span></button>
       </div>
     )
   }
