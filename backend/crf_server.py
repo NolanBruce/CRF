@@ -14,7 +14,7 @@ from database_connection import DatabaseConnection
 load_dotenv()
 
 # Create Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../frontend/build", static_url_path="/")
 app.secret_key = os.environ.get('SECRET_KEY') or \
                  ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(36))
 # CORS
@@ -32,6 +32,11 @@ connection = DatabaseConnection(db_host=db_host,
                                 db_password=db_password,
                                 db_name=db_name,
                                 db_port=db_port)
+
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 
 @app.route('/recipes', methods=['POST'])
