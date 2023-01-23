@@ -9,7 +9,7 @@ const IngredientsHeader = () => {
 
   return (
     <header style={headerStyle}>
-      <h1 style={{ fontSize:"6rem", fontWeight:"600", marginBottom:"2rem", lineHeight:"1em", color:"#9a9a9a", textAlign:"center" }}>Cocktail Recipe Finder</h1>
+      <h1 style={{ fontSize:"4rem", fontWeight:"600", marginBottom:"2rem", lineHeight:"1em", color:"#9a9a9a", textAlign:"center" }}>Cocktail Recipe Finder</h1>
     </header>
   )
 }
