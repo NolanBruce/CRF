@@ -5,9 +5,9 @@ from secrets import choice
 import string
 import os
 from dotenv import load_dotenv
-from queries import get_recipe_by_id_query, get_recipe_by_name_query, search_recipes_by_ingredients_query, \
-    get_ingredient_by_name_query, get_ingredient_by_id_query, search_ingredients_by_name_query, \
-    search_recipes_by_name_query
+from queries import get_recipe_ingredients_by_id_query, get_recipe_ingredients_by_name_query, \
+    search_recipes_by_ingredients_query, get_ingredient_by_name_query, get_ingredient_by_id_query,\
+    search_ingredients_by_name_query, search_recipes_by_name_query, get_recipe_by_id_query, get_recipe_by_name_query
 from database_connection import DatabaseConnection
 
 
@@ -60,7 +60,11 @@ def get_recipe_by_id(recipe_id):
     with connection.get_cursor() as cursor:
         query, parameters = get_recipe_by_id_query(recipe_id)
         cursor.execute(query, parameters)
-        return jsonify(convert_sql_recipe_results_to_dict(cursor))
+        recipe: dict[str] = cursor.fetchone()
+        query, parameters = get_recipe_ingredients_by_id_query(recipe_id)
+        cursor.execute(query, parameters)
+        recipe['ingredients'] = convert_sql_results_to_dict(cursor)
+        return jsonify(recipe)
 
 
 @app.route('/recipes/<string:recipe_name>/', methods=['GET'])
@@ -68,7 +72,11 @@ def get_recipe_by_name(recipe_name):
     with connection.get_cursor() as cursor:
         query, parameters = get_recipe_by_name_query(recipe_name)
         cursor.execute(query, parameters)
-        return jsonify(convert_sql_recipe_results_to_dict(cursor))
+        recipe: dict[str] = cursor.fetchone()
+        query, parameters = get_recipe_ingredients_by_name_query(recipe_name)
+        cursor.execute(query, parameters)
+        recipe['ingredients'] = convert_sql_results_to_dict(cursor)
+        return jsonify(recipe)
 
 
 @app.route('/ingredients/', methods=['POST'])
@@ -105,16 +113,11 @@ def get_ingredient_by_name(ingredient_name):
         return jsonify(cursor.fetchone())
 
 
-def convert_sql_recipe_results_to_dict(cursor) -> dict:
-    result: dict = {}
+def convert_sql_results_to_dict(cursor) -> list[dict[str]]:
     ingredients: list = []
     for row in cursor:
-        if 'name' not in result:
-            result['name'] = row['name']
-        row.pop('name', None)
         ingredients.append(row)
-    result['ingredients'] = ingredients
-    return result
+    return ingredients
 
 
 def search_recipes_by_ingredients(ingredients: list[str]) -> list[dict]:

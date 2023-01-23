@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import IngredientsContainer from "./components/ingredients/IngredientsContainer";
 import RecipesContainer from "./components/recipes/RecipesContainer";
 import axios from 'axios';
@@ -29,7 +29,8 @@ class ParentContainer extends React.Component {
       <div>
         <IngredientsContainer
           ref={this.IngredientsContainer1}
-          searchRecipes={this.searchRecipes}/>
+          searchRecipes={this.searchRecipes}
+        />
         <RecipesContainer
           ref={this.RecipesContainer1}
         />
