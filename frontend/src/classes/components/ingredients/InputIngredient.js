@@ -70,12 +70,6 @@ class InputIngredient extends Component {
     });
   }
 
-  onSearch = (searchTerm) => {
-    this.setState({
-      searchTerm: searchTerm
-    });
-  };
-
   render() {
     return (
     <div>

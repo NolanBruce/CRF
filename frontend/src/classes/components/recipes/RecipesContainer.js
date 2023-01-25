@@ -2,24 +2,15 @@ import React from "react";
 import RecipesList from "./RecipesList";
 import RecipesHeader from "./RecipesHeader";
 import RecipeClear from "./RecipeClear";
+import InputRecipe from "./InputRecipe";
 
 class RecipesContainer extends React.Component {
 
   state = {
     recipes: [],
-    display: 'none'
+    display: 'none',
+    ingredients: []
   };
-
-  componentDidMount() {
-    let temp = localStorage.getItem("recipes");
-    let loadedRecipes = JSON.parse(temp);
-    if (loadedRecipes) {
-      this.setState({
-        recipes: loadedRecipes
-      });
-      this.makeVisible();
-    }
-  }
 
   componentDidUpdate(prevProps, prevState) {
     if(prevState.recipes !== this.state.recipes) {
@@ -59,15 +50,23 @@ class RecipesContainer extends React.Component {
 
   render() {
     return (
-      <div className="container" id="RecipesContainer" style={{display: this.state.display}}>
+      <div className="container" id="RecipesContainer">
         <div className="inner">
-          <RecipesHeader />
-          <RecipesList
-            recipes={this.state.recipes}
+          <InputRecipe
+            enabled={this.props.enabled}
+            searchRecipes={this.props.searchRecipes}
           />
-          <RecipeClear
-            clearRecipes={this.clearRecipes}
-          />
+          <div style={{display: this.state.display}}>
+            <RecipesHeader
+              ingredients={this.state.ingredients}
+            />
+            <RecipesList
+              recipes={this.state.recipes}
+            />
+            <RecipeClear
+              clearRecipes={this.clearRecipes}
+            />
+          </div>
         </div>
       </div>
     );

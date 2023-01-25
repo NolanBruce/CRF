@@ -17,3 +17,8 @@
   width: 50px;
   margin: -10px 0 0 10px;
 }
+
+.title {
+  display: block;
+  cursor: pointer;
+}

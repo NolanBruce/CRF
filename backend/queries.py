@@ -6,7 +6,7 @@ FROM  recipe_ingredients AS ri
 WHERE i.name IN ({','.join(['%s' for i in ingredients])})
 GROUP BY r.id, r.name
 HAVING COUNT(r.id)>=%s
-ORDER BY r.id ASC''', tuple(ingredients + [str(len(ingredients))])
+ORDER BY r.name ASC''', tuple(ingredients + [str(len(ingredients))])
 
 
 def search_recipes_by_name_query(recipe_name: str, start: int = 0, limit: int = 10):
@@ -14,7 +14,7 @@ def search_recipes_by_name_query(recipe_name: str, start: int = 0, limit: int = 
 FROM  recipes
 WHERE LOWER(name) LIKE LOWER(%s)
 ORDER BY name ASC
-LIMIT %s OFFSET %s''', tuple([recipe_name + '%', limit, start])
+LIMIT %s OFFSET %s''', tuple(['%'+recipe_name+'%', limit, start])
 
 
 def get_recipe_by_id_query(recipe_id: int) -> tuple:
@@ -32,12 +32,12 @@ ORDER BY r.id ASC''', tuple([recipe_name])
 
 
 def get_recipe_ingredients_by_id_query(recipe_id: int) -> tuple:
-    return f'''SELECT i.name, ri.quantity, ri.unit, ri.garnish, ri.id
+    return f'''SELECT i.name, ri.quantity, ri.unit, ri.garnish, ri.id, i.abv
 FROM recipe_ingredients AS ri
     LEFT JOIN ingredients AS i ON ri.ingredient_id=i.id
     LEFT JOIN recipes AS r ON ri.recipe_id=r.id
 WHERE r.id=%s
-ORDER BY ri.garnish ASC''', tuple([recipe_id])
+ORDER BY ri.garnish ASC, ri.quantity DESC''', tuple([recipe_id])
 
 
 def get_recipe_ingredients_by_name_query(recipe_name: str) -> tuple:
@@ -46,7 +46,7 @@ FROM recipe_ingredients AS ri
     LEFT JOIN ingredients AS i ON ri.ingredient_id=i.id
     LEFT JOIN recipes AS r ON ri.recipe_id=r.id
 WHERE r.name=%s
-ORDER BY ri.garnish ASC''', tuple([recipe_name])
+ORDER BY ri.garnish ASC, ri.quantity DESC''', tuple([recipe_name])
 
 
 def get_ingredient_by_id_query(ingredient_id: int) -> tuple:
@@ -66,4 +66,4 @@ def search_ingredients_by_name_query(ingredient_name: str, start: int = 0, limit
 FROM  ingredients
 WHERE LOWER(name) LIKE LOWER(%s)
 ORDER BY name ASC
-LIMIT %s OFFSET %s''', tuple([ingredient_name + '%', limit, start])
+LIMIT %s OFFSET %s''', tuple(['%'+ingredient_name+'%', limit, start])

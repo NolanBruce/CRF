@@ -1,5 +1,4 @@
 import React from "react";
-import IngredientsHeader from "./IngredientsHeader";
 import InputIngredient from "./InputIngredient";
 import IngredientsList from "./IngredientsList";
 import IngredientsSearch from "./IngredientsSearch";
@@ -18,11 +17,14 @@ class IngredientsContainer extends React.Component {
       this.setState({
         ingredients: loadedIngredients
       })
+      if (loadedIngredients.length>0 && this.props.enabled) {
+        this.props.searchRecipes(loadedIngredients);
+      }
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(prevState.ingredients !== this.state.ingredients) {
+    if (prevState.ingredients !== this.state.ingredients) {
       const temp = JSON.stringify(this.state.ingredients);
       localStorage.setItem("ingredients", temp);
     }
@@ -50,9 +52,8 @@ class IngredientsContainer extends React.Component {
 
   render() {
     return (
-      <div className="container" id="IngredientsContainer">
+      <div className="container" id="IngredientsContainer"  style={{display: this.props.enabled ? null : 'none'}}>
         <div className="inner">
-          <IngredientsHeader />
           <InputIngredient
             addIngredientItem={this.addIngredientItem}
             ingredients={this.state.ingredients}
