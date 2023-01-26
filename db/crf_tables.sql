@@ -434,7 +434,7 @@ INSERT INTO "ingredients" ("id", "name", "type", "abv", "description", "image") 
 	(425, 'Peach Liqueur', 'Liqueuer', 0, '', '');
 /*!40000 ALTER TABLE "ingredients" ENABLE KEYS */;
 
--- Dumping data for table public.recipes: 99 rows
+-- Dumping data for table public.recipes: 108 rows
 /*!40000 ALTER TABLE "recipes" DISABLE KEYS */;
 INSERT INTO "recipes" ("id", "name", "shaken", "stirred", "rocks", "glass", "chilled", "ice", "double_strain", "description", "directions", "notes", "url") VALUES
 	(2, 'Alexander', 1, 0, 0, 'Cocktail', 0, '', 0, '', '', '', ''),
@@ -535,10 +535,19 @@ INSERT INTO "recipes" ("id", "name", "shaken", "stirred", "rocks", "glass", "chi
 	(96, 'Singapore Sling', 1, 0, 1, 'Highball', 0, '', 0, '', '', '', ''),
 	(97, 'Spritz Veneziano', 0, 0, 1, 'Cocktail', 0, '', 0, '', '', '', ''),
 	(98, 'Stinger', 0, 1, 1, 'Old Fashioned', 0, '', 0, '', '', '', ''),
-	(99, 'Tequila Sunrise', 0, 0, 1, 'Highball', 1, '', 0, '', '', '', '');
+	(99, 'Tequila Sunrise', 0, 0, 1, 'Highball', 1, '', 0, '', '', '', ''),
+	(100, 'Tuxedo', 0, 1, 0, 'Cocktail', 0, '', 0, '', '', '', ''),
+	(101, 'Vampiro', 0, 0, 1, 'Highball', 0, '', 0, '', '', '', ''),
+	(102, 'Vesper', 1, 0, 0, 'Coupe', 0, '', 0, '', '', '', ''),
+	(103, 'Vodka Tonic', 0, 1, 1, 'Old Fashioned', 0, '', 0, '', '', '', ''),
+	(104, 'Gin Rickey', 0, 1, 1, 'Highball', 0, '', 0, '', '', '', ''),
+	(105, 'Whiskey Sour', 1, 0, 1, 'Old Fashioned', 0, '', 0, '', '', '', ''),
+	(106, 'White Lady', 1, 0, 0, 'Martini', 1, '', 0, '', '', '', ''),
+	(107, 'White Russian', 0, 0, 1, 'Old Fashioned', 0, '', 0, '', '', '', ''),
+	(108, 'Yellow Bird', 1, 0, 0, 'Cocktail', 1, '', 0, '', '', '', '');
 /*!40000 ALTER TABLE "recipes" ENABLE KEYS */;
 
--- Dumping data for table public.recipe_ingredients: 447 rows
+-- Dumping data for table public.recipe_ingredients: 490 rows
 /*!40000 ALTER TABLE "recipe_ingredients" DISABLE KEYS */;
 INSERT INTO "recipe_ingredients" ("id", "recipe_id", "ingredient_id", "quantity", "unit", "garnish", "recommended") VALUES
 	(4, 1, 3, 0.5, 'oz', 0, ''),
@@ -987,7 +996,50 @@ INSERT INTO "recipe_ingredients" ("id", "recipe_id", "ingredient_id", "quantity"
 	(447, 99, 45, 4, 'oz', 0, ''),
 	(448, 99, 41, 0.25, 'oz', 0, ''),
 	(449, 99, 20, 1, 'wheel', 1, ''),
-	(450, 99, 379, 1, 'whole', 1, '');
+	(450, 99, 379, 1, 'whole', 1, ''),
+	(451, 100, 83, 1, 'oz', 0, ''),
+	(452, 100, 11, 1, 'oz', 0, ''),
+	(453, 100, 30, 1, 'dash', 0, ''),
+	(454, 100, 423, 1, 'dash', 0, ''),
+	(455, 100, 271, 3, 'dash', 0, ''),
+	(456, 100, 17, 1, 'twist', 1, ''),
+	(457, 100, 479, 1, 'whole', 1, ''),
+	(458, 101, 61, 2, 'oz', 0, ''),
+	(459, 101, 303, 1, 'oz', 0, ''),
+	(460, 101, 45, 1, 'oz', 0, ''),
+	(461, 101, 43, 0.5, 'oz', 0, ''),
+	(462, 101, 41, 0.5, 'oz', 0, ''),
+	(463, 101, 391, 7, 'drop', 0, ''),
+	(464, 101, 47, 1, 'pinch', 1, ''),
+	(465, 101, 49, 1, 'rim', 1, ''),
+	(466, 102, 416, 3, 'oz', 0, ''),
+	(467, 102, 63, 1, 'oz', 0, ''),
+	(468, 102, 228, 0.5, 'oz', 0, ''),
+	(469, 102, 17, 1, 'twist', 1, ''),
+	(470, 103, 63, 2, 'oz', 0, ''),
+	(472, 103, 54, 2, 'oz', 0, ''),
+	(471, 103, 18, 1, 'wedge', 1, ''),
+	(472, 104, 416, 2, 'oz', 0, ''),
+	(473, 104, 43, 0.5, 'oz', 0, ''),
+	(474, 104, 417, 4, 'oz', 0, ''),
+	(475, 104, 18, 2, 'wheel', 2, ''),
+	(477, 105, 42, 0.75, 'oz', 0, ''),
+	(478, 105, 50, 0.5, 'oz', 0, ''),
+	(480, 105, 5, 3, 'drop', 1, ''),
+	(476, 105, 65, 2, 'oz', 0, ''),
+	(481, 105, 379, 1, 'whole', 1, ''),
+	(479, 105, 420, 1, 'whole', 0, ''),
+	(482, 106, 416, 2, 'oz', 0, ''),
+	(483, 106, 34, 0.75, 'oz', 0, ''),
+	(484, 106, 42, 0.75, 'oz', 0, ''),
+	(485, 106, 420, 1, 'whole', 0, ''),
+	(485, 107, 63, 2, 'oz', 0, ''),
+	(486, 107, 159, 1, 'oz', 0, ''),
+	(487, 107, 369, 0.5, 'oz', 0, ''),
+	(488, 108, 57, 1.5, 'oz', 0, ''),
+	(489, 108, 181, 0.75, 'oz', 0, ''),
+	(490, 108, 34, 0.75, 'oz', 0, ''),
+	(491, 108, 43, 0.75, 'oz', 0, '');
 /*!40000 ALTER TABLE "recipe_ingredients" ENABLE KEYS */;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
